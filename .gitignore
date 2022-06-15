@@ -445,3 +445,6 @@ crashlytics-build.properties
 # Eclipse
 .project
 .settings/
+
+# This project specific
+Assets/Scripts.meta
