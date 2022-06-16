@@ -17,6 +17,24 @@ public class Board : MonoBehaviour
     private GamePosition gamePosition;
     private int ballNumber = 0;
 
+    private readonly struct NamedColor
+    {
+        public readonly Color color;
+        public readonly string name;
+
+        public NamedColor(Color c, string n)
+        {
+            this.color = c;
+            this.name = n;
+        }
+        
+        public NamedColor(int r, int g, int b, string n)
+        {
+            this.color = new Color(r / 255f, g / 255f, b / 255f);
+            this.name = n;
+        }
+    }
+
     private void CreateGrid()
     {
         float halfboard = (cellSize * boardDimension) / 2.0f;
@@ -46,18 +64,35 @@ public class Board : MonoBehaviour
         }
     }
 
-    private Ball CreateBall(int x, int y, Color color)
+    private Ball CreateBall(int x, int y, NamedColor color)
     {
         GameObject ballObject = Instantiate(ball, new Vector3(x - boardDimension/2.0f + 0.5f, y - boardDimension/2.0f + 0.5f, -1), Quaternion.identity, /* parent */ this.transform);
         Ball newBall = ballObject.GetComponent<Ball>();
         string pretty = "+#;-#;0";
-        newBall.name = "Ball " + ++ballNumber + " [" + x.ToString(pretty) + ", " + y.ToString(pretty) + " ]";
+        newBall.name = color.name + " Ball " + ++ballNumber + " [" + x.ToString(pretty) + ", " + y.ToString(pretty) + " ]";
 
         Renderer renderer = ballObject.GetComponent<Renderer>();
-        renderer.material.color = color;
+        renderer.material.color = color.color;
         float scale = cellSize * ballScale;
         renderer.transform.localScale = new Vector3(scale, scale, scale);
 
+        return newBall;
+    }
+
+    private Ball CreateBall(int x, int y)
+    {
+        NamedColor[] colors = { 
+            new NamedColor(255, 51, 51, "Red"),
+            new NamedColor(Color.cyan, "Cyan"),
+            new NamedColor(255, 0, 255, "Purple"),
+            new NamedColor(30, 144, 255, "Blue"),
+            new NamedColor(Color.green, "Green"),
+            new NamedColor(230, 128, 0, "Brown"),
+            new NamedColor(Color.yellow, "Yellow"),
+            new NamedColor(Color.black, "Black"),
+        };
+        int numberOfColors = NUMBER_OF_COLORS <= colors.Length ? NUMBER_OF_COLORS : colors.Length;
+        Ball newBall = CreateBall(x, y, colors[Random.Range(0, numberOfColors)]);
         return newBall;
     }
 
@@ -68,8 +103,8 @@ public class Board : MonoBehaviour
         {
             int x = gamePosition.indexToX(index);
             int y = gamePosition.indexToY(index);
-            Ball ball = CreateBall(x, y, Color.green);
-            gamePosition.set(x, y, ball);
+            Ball newBall = CreateBall(x, y);
+            gamePosition.set(x, y, newBall);
         }
     }
 
