@@ -12,9 +12,10 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject ball;
     [SerializeField] private float ballScale = 1;
 
-    private ArrayList balls = new ArrayList();
+    private const int NUMBER_OF_COLORS = 7;
 
-    static private int ballNumber = 0;
+    private GamePosition gamePosition;
+    private int ballNumber = 0;
 
     private void CreateGrid()
     {
@@ -47,11 +48,10 @@ public class Board : MonoBehaviour
 
     private Ball CreateBall(int x, int y, Color color)
     {
-        GameObject ballObject = Instantiate(ball, new Vector3(x, y, -1), Quaternion.identity, /* parent */ this.transform);
+        GameObject ballObject = Instantiate(ball, new Vector3(x - boardDimension/2.0f + 0.5f, y - boardDimension/2.0f + 0.5f, -1), Quaternion.identity, /* parent */ this.transform);
         Ball newBall = ballObject.GetComponent<Ball>();
         string pretty = "+#;-#;0";
         newBall.name = "Ball " + ++ballNumber + " [" + x.ToString(pretty) + ", " + y.ToString(pretty) + " ]";
-        balls.Add(newBall);
 
         Renderer renderer = ballObject.GetComponent<Renderer>();
         renderer.material.color = color;
@@ -63,11 +63,13 @@ public class Board : MonoBehaviour
 
     private void SpawnBall()
     {
-        int x = Random.Range(-boardDimension / 2, boardDimension / 2);
-        int y = Random.Range(-boardDimension / 2, boardDimension / 2);
-        if (balls.Count < boardDimension * boardDimension)
+        int index = gamePosition.getRandomIndex();
+        if (index >= 0)
         {
-            CreateBall(x, y, Color.green);
+            int x = gamePosition.indexToX(index);
+            int y = gamePosition.indexToY(index);
+            Ball ball = CreateBall(x, y, Color.green);
+            gamePosition.set(x, y, ball);
         }
     }
 
@@ -86,6 +88,7 @@ public class Board : MonoBehaviour
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
         collider.size = new Vector2(boardDimension, boardDimension);
 
+        gamePosition = new GamePosition(boardDimension, boardDimension);
         SpawnBalls();
     }
 
