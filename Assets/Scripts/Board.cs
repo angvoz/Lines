@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Board : MonoBehaviour
 {
@@ -127,8 +128,24 @@ public class Board : MonoBehaviour
         SpawnBalls();
     }
 
+    private Vector2Int mouseCoordinates()
+    {
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        int x = (int)(mousePosition.x + boardDimension / 2f);
+        int y = (int)(mousePosition.y + boardDimension / 2f);
+
+        return new Vector2Int(x, y);
+    }
+
     private void OnMouseUp()
     {
-        SpawnBalls();
+        Vector2Int coord = mouseCoordinates();
+        int x = coord.x;
+        int y = coord.y;
+
+        Ball.UnselectAll();
+        CreateBall(x, y, new NamedColor(Color.white, "White"));
+
+        //SpawnBalls();
     }
 }
