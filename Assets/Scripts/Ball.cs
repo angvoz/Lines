@@ -6,13 +6,20 @@ public class Ball : MonoBehaviour
 {
     public Animator animator;
     public bool isSelected = false;
+    public bool isMoving = false;
 
-    static public void UnselectAll()
+    private GamePosition gamePosition;
+
+    private Vector3 moveDestination;
+    private const float SPEED = 0.7f;
+
+    private void Awake()
     {
-        foreach (Ball ball in GameObject.FindObjectsOfType<Ball>())
-        {
-            ball.Select(false);
-        }
+        GameObject boardObj = GameObject.Find("Board");
+        Board board = boardObj.GetComponent<Board>();
+        gamePosition = board.GetGamePosition();
+
+        moveDestination = transform.position;
     }
 
     public void Select(bool select = true)
@@ -25,13 +32,37 @@ public class Ball : MonoBehaviour
 
     }
 
+    public void MoveTo(float x, float y)
+    {
+        moveDestination = new Vector3(x, y, 0);
+    }
+
     private void OnMouseUp()
     {
-        bool select = !isSelected;
-        if (select)
+        if (!isMoving && gamePosition.getMovingBall() == null)
         {
-            UnselectAll();
+            bool select = !isSelected;
+            if (select)
+            {
+                gamePosition.UnselectAll();
+            }
+            Select(select);
         }
-        Select(select);
+    }
+
+    
+    // Update is called once per frame
+    void Update()
+    {
+        if (isMoving && transform.position == moveDestination)
+        {
+            Select(false);
+        }
+
+        isMoving = transform.position != moveDestination;
+        if (isMoving)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, moveDestination, SPEED * Time.deltaTime);
+        }
     }
 }

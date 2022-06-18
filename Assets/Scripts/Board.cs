@@ -36,6 +36,11 @@ public class Board : MonoBehaviour
         }
     }
 
+    public GamePosition GetGamePosition()
+    {
+        return gamePosition;
+    }
+
     private void CreateGrid()
     {
         float halfboard = (cellSize * boardDimension) / 2.0f;
@@ -143,9 +148,20 @@ public class Board : MonoBehaviour
         int x = coord.x;
         int y = coord.y;
 
-        Ball.UnselectAll();
-        CreateBall(x, y, new NamedColor(Color.white, "White"));
+        //gamePosition.UnselectAll();
+        //CreateBall(x, y, new NamedColor(Color.white, "White"));
 
         //SpawnBalls();
+
+        if (gamePosition.getMovingBall() == null)
+        {
+            Ball selectedBall = gamePosition.getSelectedBall();
+            if (selectedBall != null && gamePosition.get(x, y) == null)
+            {
+                selectedBall.MoveTo(x - boardDimension / 2.0f + 0.5f, y - boardDimension / 2.0f + 0.5f);
+                gamePosition.move(selectedBall, x, y);
+            }
+        }
+
     }
 }

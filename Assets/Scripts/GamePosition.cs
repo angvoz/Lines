@@ -74,6 +74,17 @@ public class GamePosition
         return -1;
     }
 
+    public void UnselectAll()
+    {
+        foreach (Ball ball in balls)
+        {
+            if (ball != null && ball.isSelected)
+            {
+                ball.Select(false);
+            }
+        }
+    }
+
     public Ball get(int x, int y)
     {
         if (valid(x, y))
@@ -96,4 +107,40 @@ public class GamePosition
         return count;
     }
 
+    public Ball getSelectedBall()
+    {
+        foreach (Ball ball in balls)
+        {
+            if (ball != null && ball.isSelected)
+            {
+                return ball;
+            }
+        }
+        return null;
+    }
+    
+    public Ball getMovingBall()
+    {
+        foreach (Ball ball in balls)
+        {
+            if (ball != null && ball.isMoving)
+            {
+                return ball;
+            }
+        }
+        return null;
+    }
+
+    public void move(Ball ball, int x, int y)
+    {
+        for (int i = 0; i < balls.Count; i++)
+        {
+            if (ReferenceEquals(ball, balls[i]))
+            {
+                balls[i] = null;
+                balls[index(x, y)] = ball;
+                break;
+            };
+        }
+    }
 }
