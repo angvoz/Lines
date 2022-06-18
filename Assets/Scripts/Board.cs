@@ -13,6 +13,8 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject ball;
     [SerializeField] private float ballScale = 1;
 
+    [SerializeField] private GameObject plate;
+
     private const int NUMBER_OF_COLORS = 7;
 
     private GamePosition gamePosition;
@@ -142,6 +144,20 @@ public class Board : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
+
+    private GameObject plateObject;
+
+    private GameObject CreatePlate(int x, int y)
+    {
+        if (plateObject != null)
+        {
+            Destroy(plateObject);
+        }
+        plateObject = Instantiate(plate, new Vector3(x - boardDimension / 2.0f + 0.5f, y - boardDimension / 2.0f + 0.5f, -1), Quaternion.identity, /* parent */ this.transform);
+        plateObject.name = "Plate";
+        return plateObject;
+    }
+
     private void OnMouseUp()
     {
         Vector2Int coord = mouseCoordinates();
@@ -156,6 +172,11 @@ public class Board : MonoBehaviour
         if (gamePosition.getMovingBall() == null)
         {
             Ball selectedBall = gamePosition.getSelectedBall();
+            if (selectedBall != null)
+            {
+                CreatePlate(x, y);
+            }
+
             if (selectedBall != null && gamePosition.get(x, y) == null)
             {
                 selectedBall.MoveTo(x - boardDimension / 2.0f + 0.5f, y - boardDimension / 2.0f + 0.5f);
