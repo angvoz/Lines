@@ -11,13 +11,14 @@ public class Ball : MonoBehaviour
     private GamePosition gamePosition;
 
     private Vector3 moveDestination;
-    private const float SPEED = 0.7f;
+    private float speed;
 
     private void Awake()
     {
         GameObject boardObj = GameObject.Find("Board");
         Board board = boardObj.GetComponent<Board>();
         gamePosition = board.GetGamePosition();
+        speed = board.ballSpeed;
 
         moveDestination = transform.position;
     }
@@ -62,7 +63,7 @@ public class Ball : MonoBehaviour
         isMoving = transform.position != moveDestination;
         if (isMoving)
         {
-            transform.position = Vector3.MoveTowards(transform.position, moveDestination, SPEED * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, moveDestination, speed * Time.deltaTime);
         }
     }
 }

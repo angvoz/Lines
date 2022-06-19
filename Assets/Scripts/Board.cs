@@ -12,6 +12,7 @@ public class Board : MonoBehaviour
     [SerializeField] private float cellSize = 1;
     [SerializeField] private GameObject ball;
     [SerializeField] private float ballScale = 1;
+    [SerializeField] public float ballSpeed = 1;
 
     [SerializeField] private GameObject plate;
 
