@@ -17,7 +17,7 @@ public class Ball : MonoBehaviour {
     private CameraHelper cameraHelper;
 
     private Vector3 moveDestination;
-    private const float SPEED = 0.7f;
+    private float speed;
 
     public const float BALL_LEVEL = -1.0f;
 
@@ -93,6 +93,7 @@ public class Ball : MonoBehaviour {
         board = boardObj.GetComponent<Board>();
         gamePosition = board.GetGamePosition();
         cameraHelper = new CameraHelper(board.boardDimension, board.boardDimension);
+        speed = board.ballSpeed;
 
         moveDestination = transform.position;
     }
@@ -128,7 +129,7 @@ public class Ball : MonoBehaviour {
 
         isMoving = transform.position != moveDestination;
         if (isMoving) {
-            transform.position = Vector3.MoveTowards(transform.position, moveDestination, SPEED * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, moveDestination, speed * Time.deltaTime);
         }
     }
 }
