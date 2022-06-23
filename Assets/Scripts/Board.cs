@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Board : MonoBehaviour {
     private LineRenderer lr;
@@ -11,6 +12,8 @@ public class Board : MonoBehaviour {
     [SerializeField] private GameObject ballPrefab;
 
     private const float BOARD_LEVEL = 0f;
+
+    private CameraHelper cameraHelper;
 
     void Start() {
         QualitySettings.vSyncCount = 0;
@@ -50,22 +53,27 @@ public class Board : MonoBehaviour {
         }
     }
 
-    public Vector3 cellToCamera(int cellX, int cellY, float z) {
-        float x = cellX - boardDimension / 2.0f + 0.5f;
-        float y = cellY - boardDimension / 2.0f + 0.5f;
-
-        return new Vector3(x, y, z);
-    }
-
     private void Awake() {
         CreateGrid();
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
         collider.size = new Vector2(boardDimension, boardDimension);
 
+        cameraHelper = new CameraHelper(boardDimension, boardDimension);
         SpawnBalls(5);
     }
 
     private void OnMouseUp() {
-        SpawnBalls(3);
+        Ball.UnselectAll();
+
+        try {
+            Vector2Int selectedCell = cameraHelper.getSelectedCell();
+            int x = selectedCell.x;
+            int y = selectedCell.y;
+            Ball.create(ballPrefab, cellSize, this, x, y);
+
+            //SpawnBalls(3);
+        } catch {
+            // Ignore invalid mouse location
+        }
     }
 }

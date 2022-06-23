@@ -50,7 +50,7 @@ public class Ball : MonoBehaviour {
 
     public const float BALL_LEVEL = -1.0f;
 
-    static private Ball create(GameObject prefab, float scale, Board board, int x, int y, int colorIndex = -1) {
+    static public Ball create(GameObject prefab, float scale, Board board, int x, int y, int colorIndex = -1) {
         NamedColor[] colors = {
             new NamedColor(255, 51, 51, "Red"),
             new NamedColor(Color.cyan, "Cyan"),
@@ -66,7 +66,9 @@ public class Ball : MonoBehaviour {
             colorIndex = Random.Range(0, numberOfColors);
         }
         NamedColor color = colors[colorIndex];
-        GameObject ballObject = Instantiate(prefab, board.cellToCamera(x, y, BALL_LEVEL), Quaternion.identity, /* parent */ board.transform);
+        CameraHelper cameraHelper = new CameraHelper(board.boardDimension, board.boardDimension);
+        Vector3 position = cameraHelper.cellToCamera(x, y, BALL_LEVEL);
+        GameObject ballObject = Instantiate(prefab, position, Quaternion.identity, parent: board.transform);
 
         Ball ball = ballObject.GetComponent<Ball>();
         ball.color = colorIndex;
