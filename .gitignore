@@ -362,6 +362,11 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# Unity builds
+Publish-Build/
+connectwebgl.zip
+webgl_sharing
+
 #  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 # This .gitignore file should be placed at the root of your Unity project directory
 #
