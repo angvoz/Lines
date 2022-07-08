@@ -8,6 +8,9 @@ public class Ball : MonoBehaviour {
     public Animator animator;
     public bool isSelected = false;
 
+    private Board board;
+    private GamePosition gamePosition;
+
     public const float BALL_LEVEL = -1.0f;
 
     static private Ball create(GameObject prefab, float scale, Board board, int x, int y) {
@@ -23,10 +26,15 @@ public class Ball : MonoBehaviour {
     }
 
     static private Ball spawn(GameObject prefab, float scale, Board board) {
-        int x = Random.Range(0, board.boardDimension);
-        int y = Random.Range(0, board.boardDimension);
-
-        Ball ball = create(prefab, scale, board, x, y);
+        Ball ball = null;
+        GamePosition gamePosition = board.GetGamePosition();
+        int index = gamePosition.getRandomIndex();
+        if (index >= 0) {
+            int x = gamePosition.indexToX(index);
+            int y = gamePosition.indexToY(index);
+            ball = create(prefab, scale, board, x, y);;
+            gamePosition.set(x, y, ball);
+        }
         return ball;
     }
 
@@ -39,6 +47,12 @@ public class Ball : MonoBehaviour {
             }
         }
         return balls;
+    }
+
+    private void Awake() {
+        GameObject boardObj = GameObject.Find("Board");
+        board = boardObj.GetComponent<Board>();
+        gamePosition = board.GetGamePosition();
     }
 
     static public void UnselectAll() {

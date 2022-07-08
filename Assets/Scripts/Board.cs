@@ -13,6 +13,12 @@ public class Board : MonoBehaviour {
 
     private const float BOARD_LEVEL = 0f;
 
+    private GamePosition gamePosition;
+
+    public GamePosition GetGamePosition() {
+        return gamePosition;
+    }
+
     void Start() {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 90;
@@ -61,6 +67,7 @@ public class Board : MonoBehaviour {
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
         collider.size = new Vector2(boardDimension, boardDimension);
 
+        gamePosition = new GamePosition(boardDimension, boardDimension);
         SpawnBalls(5);
     }
 
