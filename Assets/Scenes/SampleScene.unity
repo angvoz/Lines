@@ -270,6 +270,7 @@ MonoBehaviour:
   ballSpeed: 10
   movePlatePrefab: {fileID: 4418429182332804154, guid: e04d7a0d2d6554846b2757c41f1e9dfb, type: 3}
   textPlatePrefab: {fileID: 4967515002671648670, guid: 34b345f3dfcf5db499a3ef384ad5c3f7, type: 3}
+  scoreBoardPrefab: {fileID: 1826282134977825598, guid: cb98431df44604749bc9b7184b39c131, type: 3}
 --- !u!61 &51295431
 BoxCollider2D:
   m_ObjectHideFlags: 0
