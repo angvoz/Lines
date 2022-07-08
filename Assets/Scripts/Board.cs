@@ -12,6 +12,11 @@ public class Board : MonoBehaviour {
 
     private const float BOARD_LEVEL = 0f;
 
+    void Start() {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 90;
+    }
+
     private void CreateGrid() {
         float halfboard = (cellSize * boardDimension) / 2.0f;
 
