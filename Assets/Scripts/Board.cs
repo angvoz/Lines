@@ -61,42 +61,11 @@ public class Board : MonoBehaviour {
         }
     }
 
-    private void SpawnBall(Vector2Int cell) {
-        try {
-            Ball newBall = Ball.create(ball, cellSize * ballScale, this, cell);
-            gamePosition.set(cell, newBall);
-        } catch (KeyNotFoundException) {
-            // Out of empty cells
-        }
-    }
-
-    private void SpawnBallsSample() {
-        SpawnBall(new Vector2Int(0, 0));
-        SpawnBall(new Vector2Int(2, 0));
-        SpawnBall(new Vector2Int(1, 6));
-        SpawnBall(new Vector2Int(4, 6));
-        SpawnBall(new Vector2Int(4, 8));
-        SpawnBall(new Vector2Int(7, 6));
-        SpawnBall(new Vector2Int(0, 4));
-        SpawnBall(new Vector2Int(0, 8));
-        SpawnBall(new Vector2Int(3, 4));
-        SpawnBall(new Vector2Int(3, 5));
-        SpawnBall(new Vector2Int(8, 1));
-        SpawnBall(new Vector2Int(7, 0));
-        SpawnBall(new Vector2Int(6, 6));
-        SpawnBall(new Vector2Int(6, 5));
-        SpawnBall(new Vector2Int(4, 1));
-        SpawnBall(new Vector2Int(8, 3));
-        SpawnBall(new Vector2Int(0, 7));
-        SpawnBall(new Vector2Int(1, 5));
-        SpawnBall(new Vector2Int(2, 1));
-        SpawnBall(new Vector2Int(2, 7));
-        SpawnBall(new Vector2Int(4, 0));
-        SpawnBall(new Vector2Int(8, 7));
-    }
-
     private void SpawnBalls(int n) {
         List<Ball> balls = Ball.spawn(n, ballPrefab, cellSize * ballScale, this);
+        foreach (Ball ball in balls) {
+            pathFinder.CollapseLines(ball);
+        }
     }
 
     private void Awake() {
@@ -110,8 +79,7 @@ public class Board : MonoBehaviour {
         movePlate = new MovePlate(movePlatePrefab, this);
         trail = new Trail(textPlatePrefab, this);
 
-        //SpawnBalls(5);
-        SpawnBallsSample();
+        SpawnBalls(5);
     }
 
     private void OnMouseUp() {
@@ -143,21 +111,31 @@ public class Board : MonoBehaviour {
         }
     }
 
-    bool eventBallArrived = false;
+    Ball ballArrived = null;
 
-    public void notifyBallArrived() {
-        eventBallArrived = true;
+    public void notifyBallArrived(Ball ball) {
+        ballArrived = ball;
+    }
+
+    public void notifyBallSelected(Ball ball) {
+        movePlate.clear();
+        trail.clear();
     }
 
     // Update is called once per frame
     void Update() {
-        if (eventBallArrived) {
-            eventBallArrived = false;
+        if (ballArrived != null) {
+            Ball ball = ballArrived;
+            ballArrived = null;
 
             if (gamePosition.getMovingBall() == null) {
                 trail.clear();
                 movePlate.clear();
-                SpawnBalls(3);
+
+                int cnt = pathFinder.CollapseLines(ball);
+                if (cnt <= 0) {
+                    SpawnBalls(3);
+                }
             }
         }
     }

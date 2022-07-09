@@ -35,7 +35,7 @@ public class Ball : MonoBehaviour {
         }
     }
 
-    static public Ball create(GameObject prefab, float scale, Board board, Vector2Int cell) {
+    static private Ball create(GameObject prefab, float scale, Board board, Vector2Int cell) {
         NamedColor[] colors = {
             new NamedColor(255, 51, 51, "Red"),
             new NamedColor(Color.cyan, "Cyan"),
@@ -101,7 +101,9 @@ public class Ball : MonoBehaviour {
         if (animator != null) {
             animator.SetBool("selected", isSelected);
         }
-
+        if (isSelected) {
+            board.notifyBallSelected(this);
+        }
     }
 
     List<Vector3> moveDestinationPath = new List<Vector3>();
@@ -139,11 +141,11 @@ public class Ball : MonoBehaviour {
                     moveDestination = moveDestinationPath[0];
                 } else {
                     Select(false);
-                    board.notifyBallArrived();
+                    board.notifyBallArrived(this);
                 }
             } else {
                 Select(false);
-                board.notifyBallArrived();
+                board.notifyBallArrived(this);
             }
         }
 
