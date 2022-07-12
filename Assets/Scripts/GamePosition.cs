@@ -6,8 +6,8 @@ using UnityEngine;
 public class GamePosition {
     private List<Ball> balls = new List<Ball>();
 
-    private int dimensionX;
-    private int dimensionY;
+    public int dimensionX;
+    public int dimensionY;
     public GamePosition(int dimX, int dimY) {
         dimensionX = dimX;
         dimensionY = dimY;
@@ -23,6 +23,15 @@ public class GamePosition {
 
     private Vector2Int getCell(int index) {
         return new Vector2Int(index % dimensionX, index / dimensionX);
+    }
+
+    public Vector2Int findCell(Ball ball) {
+        for (int i = 0; i < dimensionX * dimensionY; i++) {
+            if (balls[i] == ball) {
+                return getCell(i);
+            }
+        }
+        throw new KeyNotFoundException("The ball was not found on the board!, ball=" + ball);
     }
 
     private bool valid(int x, int y) {

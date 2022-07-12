@@ -35,7 +35,7 @@ public class Ball : MonoBehaviour {
         }
     }
 
-    static private Ball create(GameObject prefab, float scale, Board board, Vector2Int cell) {
+    static public Ball create(GameObject prefab, float scale, Board board, Vector2Int cell) {
         NamedColor[] colors = {
             new NamedColor(255, 51, 51, "Red"),
             new NamedColor(Color.cyan, "Cyan"),

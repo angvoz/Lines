@@ -20,6 +20,7 @@ public class Board : MonoBehaviour {
 
     private GamePosition gamePosition;
     private CameraHelper cameraHelper;
+    private PathFinder pathFinder;
 
     private MovePlate movePlate;
     private Trail trail;
@@ -60,6 +61,40 @@ public class Board : MonoBehaviour {
         }
     }
 
+    private void SpawnBall(Vector2Int cell) {
+        try {
+            Ball newBall = Ball.create(ball, cellSize * ballScale, this, cell);
+            gamePosition.set(cell, newBall);
+        } catch (KeyNotFoundException) {
+            // Out of empty cells
+        }
+    }
+
+    private void SpawnBallsSample() {
+        SpawnBall(new Vector2Int(0, 0));
+        SpawnBall(new Vector2Int(2, 0));
+        SpawnBall(new Vector2Int(1, 6));
+        SpawnBall(new Vector2Int(4, 6));
+        SpawnBall(new Vector2Int(4, 8));
+        SpawnBall(new Vector2Int(7, 6));
+        SpawnBall(new Vector2Int(0, 4));
+        SpawnBall(new Vector2Int(0, 8));
+        SpawnBall(new Vector2Int(3, 4));
+        SpawnBall(new Vector2Int(3, 5));
+        SpawnBall(new Vector2Int(8, 1));
+        SpawnBall(new Vector2Int(7, 0));
+        SpawnBall(new Vector2Int(6, 6));
+        SpawnBall(new Vector2Int(6, 5));
+        SpawnBall(new Vector2Int(4, 1));
+        SpawnBall(new Vector2Int(8, 3));
+        SpawnBall(new Vector2Int(0, 7));
+        SpawnBall(new Vector2Int(1, 5));
+        SpawnBall(new Vector2Int(2, 1));
+        SpawnBall(new Vector2Int(2, 7));
+        SpawnBall(new Vector2Int(4, 0));
+        SpawnBall(new Vector2Int(8, 7));
+    }
+
     private void SpawnBalls(int n) {
         List<Ball> balls = Ball.spawn(n, ballPrefab, cellSize * ballScale, this);
     }
@@ -71,10 +106,12 @@ public class Board : MonoBehaviour {
 
         gamePosition = new GamePosition(boardDimension, boardDimension);
         cameraHelper = new CameraHelper(boardDimension, boardDimension);
+        pathFinder = new PathFinder(gamePosition);
         movePlate = new MovePlate(movePlatePrefab, this);
         trail = new Trail(textPlatePrefab, this);
 
-        SpawnBalls(5);
+        //SpawnBalls(5);
+        SpawnBallsSample();
     }
 
     private void OnMouseUp() {
@@ -86,9 +123,11 @@ public class Board : MonoBehaviour {
                 trail.clear();
             
                 Ball selectedBall = gamePosition.getSelectedBall();
+                if (selectedBall != null) {
+                    List<Vector2Int> path = pathFinder.getPath(selectedBall, selectedCell);
+                    trail.create(path);
+                    //trail.createDebug(path, pathFinder);
 
-                if (selectedCell != null) {
-                    trail.createPlate(selectedCell, selectedCell.ToString());
                     movePlate.create(selectedCell);
                 }
 
