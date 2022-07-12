@@ -14,6 +14,7 @@ public class Board : MonoBehaviour {
     [SerializeField] public float ballSpeed = 1;
 
     [SerializeField] private GameObject movePlatePrefab;
+    [SerializeField] private GameObject textPlatePrefab;
 
     private const float BOARD_LEVEL = 0f;
 
@@ -21,6 +22,7 @@ public class Board : MonoBehaviour {
     private CameraHelper cameraHelper;
 
     private MovePlate movePlate;
+    private Trail trail;
 
     public GamePosition GetGamePosition() {
         return gamePosition;
@@ -70,6 +72,7 @@ public class Board : MonoBehaviour {
         gamePosition = new GamePosition(boardDimension, boardDimension);
         cameraHelper = new CameraHelper(boardDimension, boardDimension);
         movePlate = new MovePlate(movePlatePrefab, this);
+        trail = new Trail(textPlatePrefab, this);
 
         SpawnBalls(5);
     }
@@ -79,15 +82,21 @@ public class Board : MonoBehaviour {
             Vector2Int selectedCell = cameraHelper.getSelectedCell();
 
             if (gamePosition.getMovingBall() == null) {
+                movePlate.clear();
+                trail.clear();
+            
                 Ball selectedBall = gamePosition.getSelectedBall();
-                if (selectedBall != null) {
+
+                if (selectedCell != null) {
+                    trail.createPlate(selectedCell, selectedCell.ToString());
                     movePlate.create(selectedCell);
                 }
 
-                if (selectedBall != null && gamePosition.get(selectedCell) == null) {
-                    selectedBall.move(cameraHelper.cellToCamera(selectedCell, Ball.BALL_LEVEL));
-                    gamePosition.move(selectedBall, selectedCell);
-                }
+                //if (selectedBall != null && gamePosition.get(selectedCell) == null)
+                //{
+                //    selectedBall.move(cameraHelper.cellToCamera(selectedCell, Ball.BALL_LEVEL));
+                //    gamePosition.move(selectedBall, selectedCell);
+                //}
             }
 
             //SpawnBalls(3);
