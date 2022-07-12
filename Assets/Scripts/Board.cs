@@ -11,10 +11,14 @@ public class Board : MonoBehaviour {
     [SerializeField] private float cellSize = 1;
     [SerializeField] private GameObject ballPrefab;
 
+    [SerializeField] private GameObject movePlatePrefab;
+
     private const float BOARD_LEVEL = 0f;
 
     private GamePosition gamePosition;
     private CameraHelper cameraHelper;
+
+    private MovePlate movePlate;
 
     public GamePosition GetGamePosition() {
         return gamePosition;
@@ -65,6 +69,8 @@ public class Board : MonoBehaviour {
 
         gamePosition = new GamePosition(boardDimension, boardDimension);
         cameraHelper = new CameraHelper(boardDimension, boardDimension);
+        movePlate = new MovePlate(movePlatePrefab, this);
+
         SpawnBalls(5);
     }
 
@@ -76,6 +82,10 @@ public class Board : MonoBehaviour {
 
             if (gamePosition.getMovingBall() == null) {
                 Ball selectedBall = gamePosition.getSelectedBall();
+                if (selectedBall != null) {
+                    movePlate.create(x, y);
+                }
+
                 if (selectedBall != null && gamePosition.get(x, y) == null) {
                     selectedBall.move(x, y);
                     gamePosition.move(selectedBall, x, y);
