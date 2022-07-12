@@ -10,9 +10,14 @@ public class Ball : MonoBehaviour {
 
     public Animator animator;
     public bool isSelected = false;
+    public bool isMoving = false;
 
     private Board board;
     private GamePosition gamePosition;
+    private CameraHelper cameraHelper;
+
+    private Vector3 moveDestination;
+    private const float SPEED = 0.7f;
 
     public const float BALL_LEVEL = -1.0f;
 
@@ -87,12 +92,9 @@ public class Ball : MonoBehaviour {
         GameObject boardObj = GameObject.Find("Board");
         board = boardObj.GetComponent<Board>();
         gamePosition = board.GetGamePosition();
-    }
+        cameraHelper = new CameraHelper(board.boardDimension, board.boardDimension);
 
-    static public void UnselectAll() {
-        foreach (Ball ball in GameObject.FindObjectsOfType<Ball>()) {
-            ball.Select(false);
-        }
+        moveDestination = transform.position;
     }
 
     public void Select(bool select = true) {
@@ -103,11 +105,30 @@ public class Ball : MonoBehaviour {
 
     }
 
+    public void move(int cellX, int cellY) {
+        moveDestination = cameraHelper.cellToCamera(cellX, cellY, BALL_LEVEL);
+    }
+
     private void OnMouseUp() {
-        bool select = !isSelected;
-        if (select) {
-            UnselectAll();
+        if (!isMoving && gamePosition.getMovingBall() == null) {
+            bool select = !isSelected;
+            if (select) {
+                gamePosition.UnselectAll();
+            }
+            Select(select);
         }
-        Select(select);
+    }
+
+
+    // Update is called once per frame
+    void Update() {
+        if (isMoving && transform.position == moveDestination) {
+            Select(false);
+        }
+
+        isMoving = transform.position != moveDestination;
+        if (isMoving) {
+            transform.position = Vector3.MoveTowards(transform.position, moveDestination, SPEED * Time.deltaTime);
+        }
     }
 }

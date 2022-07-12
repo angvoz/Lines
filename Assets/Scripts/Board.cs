@@ -68,13 +68,18 @@ public class Board : MonoBehaviour {
     }
 
     private void OnMouseUp() {
-        Ball.UnselectAll();
-
         try {
             Vector2Int selectedCell = cameraHelper.getSelectedCell();
             int x = selectedCell.x;
             int y = selectedCell.y;
-            Ball.create(ball, cellSize * ballScale, this, x, y);
+
+            if (gamePosition.getMovingBall() == null) {
+                Ball selectedBall = gamePosition.getSelectedBall();
+                if (selectedBall != null && gamePosition.get(x, y) == null) {
+                    selectedBall.move(x, y);
+                    gamePosition.move(selectedBall, x, y);
+                }
+            }
 
             //SpawnBalls(3);
         } catch {

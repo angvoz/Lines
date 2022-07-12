@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 // Class GamePosition represents position of the balls on the board
@@ -58,6 +59,14 @@ public class GamePosition {
         return -1;
     }
 
+    public void UnselectAll() {
+        foreach (Ball ball in balls) {
+            if (ball != null && ball.isSelected) {
+                ball.Select(false);
+            }
+        }
+    }
+
     public Ball get(int x, int y) {
         if (valid(x, y)) {
             return (Ball)balls[index(x, y)];
@@ -75,4 +84,41 @@ public class GamePosition {
         return count;
     }
 
+    public Ball getSelectedBall() {
+        foreach (Ball ball in balls) {
+            if (ball != null && ball.isSelected) {
+                return ball;
+            }
+        }
+        return null;
+    }
+
+    public Ball getMovingBall() {
+        foreach (Ball ball in balls) {
+            if (ball != null && ball.isMoving) {
+                return ball;
+            }
+        }
+        return null;
+    }
+
+    private int findIndex(Ball ball) {
+        for (int i = 0; i < balls.Count; i++) {
+            if (ReferenceEquals(ball, balls[i])) {
+                return i;
+            };
+        }
+
+        throw new KeyNotFoundException("Ball " + ball + " not found");
+    }
+
+    public void move(Ball ball, int x, int y) {
+        try {
+            int ind = findIndex(ball);
+            balls[ind] = null;
+            balls[index(x, y)] = ball;
+        } catch (KeyNotFoundException) {
+            // Ball not found
+        }
+    }
 }
