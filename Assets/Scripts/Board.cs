@@ -112,31 +112,49 @@ public class Board : MonoBehaviour {
 
     private void OnMouseUp() {
         try {
-            Vector2Int selectedCell = cameraHelper.getSelectedCell();
-
             if (gamePosition.getMovingBall() == null) {
                 movePlate.clear();
                 trail.clear();
             
                 Ball selectedBall = gamePosition.getSelectedBall();
                 if (selectedBall != null) {
-                    List<Vector2Int> path = pathFinder.getPath(selectedBall, selectedCell);
-                    trail.create(path);
-                    //trail.createDebug(path, pathFinder);
-
-                    movePlate.create(selectedCell);
+                    Vector2Int selectedCell = cameraHelper.getSelectedCell();
+                    if (gamePosition.valid(selectedCell) && gamePosition.get(selectedCell) == null) {
+                        List<Vector2Int> path = pathFinder.getPath(selectedBall, selectedCell);
+                        if (path.Count > 0) {
+                            movePlate.create(selectedCell);
+                            trail.create(path);
+                            List<Vector3> cameraPath = new List<Vector3>();
+                            for (int i = 1; i < path.Count; i++) {
+                                cameraPath.Add(cameraHelper.cellToCamera(path[i], Ball.BALL_LEVEL));
+                            }
+                            selectedBall.MoveTo(cameraPath);
+                            gamePosition.move(selectedBall, selectedCell);
+                        }
+                    }
                 }
-
-                //if (selectedBall != null && gamePosition.get(selectedCell) == null)
-                //{
-                //    selectedBall.move(cameraHelper.cellToCamera(selectedCell, Ball.BALL_LEVEL));
-                //    gamePosition.move(selectedBall, selectedCell);
-                //}
             }
-
-            //SpawnBalls(3);
         } catch {
             // Ignore invalid mouse location
+        }
+    }
+
+    bool eventBallArrived = false;
+
+    public void notifyBallArrived() {
+        eventBallArrived = true;
+    }
+
+    // Update is called once per frame
+    void Update() {
+        if (eventBallArrived) {
+            eventBallArrived = false;
+
+            if (gamePosition.getMovingBall() == null) {
+                trail.clear();
+                movePlate.clear();
+                SpawnBalls(3);
+            }
         }
     }
 }

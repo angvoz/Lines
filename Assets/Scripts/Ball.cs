@@ -128,8 +128,16 @@ public class Ball : MonoBehaviour {
 
     }
 
+    List<Vector3> moveDestinationPath = new List<Vector3>();
     public void move(Vector3 destination) {
         moveDestination = destination;
+    }
+
+    public void MoveTo(List<Vector3> destinationPath) {
+        moveDestinationPath = destinationPath;
+        if (moveDestinationPath.Count > 0) {
+            moveDestination = destinationPath[0];
+        }
     }
 
     private void OnMouseUp() {
@@ -146,7 +154,21 @@ public class Ball : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (isMoving && transform.position == moveDestination) {
-            Select(false);
+            // Arrived to moveDestination
+            if (moveDestinationPath.Count > 0) {
+                if (moveDestinationPath[0] == moveDestination) {
+                    moveDestinationPath.RemoveAt(0);
+                }
+                if (moveDestinationPath.Count > 0) {
+                    moveDestination = moveDestinationPath[0];
+                } else {
+                    Select(false);
+                    board.notifyBallArrived();
+                }
+            } else {
+                Select(false);
+                board.notifyBallArrived();
+            }
         }
 
         isMoving = transform.position != moveDestination;
