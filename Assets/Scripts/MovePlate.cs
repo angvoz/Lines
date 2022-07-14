@@ -16,12 +16,12 @@ public class MovePlate
         cameraHelper = new CameraHelper(board.boardDimension, board.boardDimension);
     }
 
-    public void create(int x, int y) {
+    public void create(Vector2Int cell) {
         if (movePlateInstance != null) {
             Board.Destroy(movePlateInstance);
         }
 
-        Vector3 position = cameraHelper.cellToCamera(x, y, PLATE_LEVEL);
+        Vector3 position = cameraHelper.cellToCamera(cell, PLATE_LEVEL);
         movePlateInstance = Board.Instantiate(movePlatePrefab, position, Quaternion.identity, parent: board.transform);
         movePlateInstance.name = "Move Plate";
     }
