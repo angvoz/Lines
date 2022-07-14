@@ -28,7 +28,7 @@ public class Trail {
         textPlateObject.name = "Text Plate " + cell;
         TextMeshPro textPlateText = textPlateObject.GetComponentInChildren<TextMeshPro>();
         if (textPlateText != null) {
-            textPlateText.text = text;
+            textPlateText.text = "";
         }
         textPlateList.Add(textPlateObject);
         return textPlateObject;
@@ -41,20 +41,6 @@ public class Trail {
         }
         GameObject textPlateObject = createPlate(cell, text);
         return textPlateObject;
-    }
-
-    public void createDebug(List<Vector2Int> path, PathFinder pathFinder) {
-        // For debugging purpose
-        Vector2Int?[,] pathPlan = pathFinder.getPathPlan();
-        for (int x = 0; x < board.boardDimension; x++) {
-            for (int y = 0; y < board.boardDimension; y++) {
-                Vector2Int cell = new Vector2Int(x, y);
-                Vector2Int? val = pathPlan[x, y];
-                if (val.HasValue) {
-                    createPlate(cell, val);
-                }
-            }
-        }
     }
 
     public void create(List<Vector2Int> path) {
