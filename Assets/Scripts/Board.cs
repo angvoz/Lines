@@ -10,6 +10,7 @@ public class Board : MonoBehaviour {
     [SerializeField] public int boardDimension = 9;
     [SerializeField] private float cellSize = 1;
     [SerializeField] private GameObject ballPrefab;
+    [SerializeField] public float ballSpeed = 1;
 
     [SerializeField] private GameObject movePlatePrefab;
 
