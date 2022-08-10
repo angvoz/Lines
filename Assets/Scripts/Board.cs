@@ -78,18 +78,16 @@ public class Board : MonoBehaviour {
     private void OnMouseUp() {
         try {
             Vector2Int selectedCell = cameraHelper.getSelectedCell();
-            int x = selectedCell.x;
-            int y = selectedCell.y;
 
             if (gamePosition.getMovingBall() == null) {
                 Ball selectedBall = gamePosition.getSelectedBall();
                 if (selectedBall != null) {
-                    movePlate.create(x, y);
+                    movePlate.create(selectedCell);
                 }
 
-                if (selectedBall != null && gamePosition.get(x, y) == null) {
-                    selectedBall.move(x, y);
-                    gamePosition.move(selectedBall, x, y);
+                if (selectedBall != null && gamePosition.get(selectedCell) == null) {
+                    selectedBall.move(cameraHelper.cellToCamera(selectedCell, Ball.BALL_LEVEL));
+                    gamePosition.move(selectedBall, selectedCell);
                 }
             }
 

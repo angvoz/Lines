@@ -10,23 +10,23 @@ public class CameraHelper {
         this.boardDimensionY = boardDimensionY;
     }
 
-    public Vector3 cellToCameraUnchecked(int cellX, int cellY, float z) {
-        float x = cellX - boardDimensionX / 2.0f + 0.5f;
-        float y = cellY - boardDimensionY / 2.0f + 0.5f;
+    public Vector3 cellToCameraUnchecked(Vector2Int cell, float z) {
+        float x = cell.x - boardDimensionX / 2.0f + 0.5f;
+        float y = cell.y - boardDimensionY / 2.0f + 0.5f;
 
         return new Vector3(x, y, z);
     }
 
-    public Vector3 cellToCamera(int cellX, int cellY, float z) {
-        if (cellX < 0 || cellX >= boardDimensionX) {
-            throw new ArgumentOutOfRangeException("cell (" + cellX + "," + cellY + "): x=" + cellX + " is out of range");
+    public Vector3 cellToCamera(Vector2Int cell, float z) {
+        if (cell.x < 0 || cell.x >= boardDimensionX) {
+            throw new ArgumentOutOfRangeException("cell (" + cell.x + "," + cell.y + "): x=" + cell.x + " is out of range");
         }
 
-        if (cellY < 0 || cellY >= boardDimensionY) {
-            throw new ArgumentOutOfRangeException("cell (" + cellX + "," + cellY + "): y=" + cellY + " is out of range");
+        if (cell.y < 0 || cell.y >= boardDimensionY) {
+            throw new ArgumentOutOfRangeException("cell (" + cell.x + "," + cell.y + "): y=" + cell.y + " is out of range");
         }
 
-        return cellToCameraUnchecked(cellX, cellY, z);
+        return cellToCameraUnchecked(cell, z);
     }
 
     public Vector2Int getSelectedCell() {

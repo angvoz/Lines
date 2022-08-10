@@ -4,7 +4,7 @@ using UnityEngine;
 
 // Class GamePosition represents position of the balls on the board
 public class GamePosition {
-    private ArrayList balls = new ArrayList();
+    private List<Ball> balls = new List<Ball>();
 
     private int dimensionX;
     private int dimensionY;
@@ -17,24 +17,25 @@ public class GamePosition {
         }
     }
 
-    private int index(int x, int y) {
-        return y * dimensionX + x;
+    private int index(Vector2Int cell) {
+        return cell.y * dimensionX + cell.x;
     }
 
-    public int indexToX(int index) {
-        return index % dimensionX;
-    }
-    public int indexToY(int index) {
-        return index / dimensionX;
+    private Vector2Int getCell(int index) {
+        return new Vector2Int(index % dimensionX, index / dimensionX);
     }
 
     private bool valid(int x, int y) {
         return x >= 0 && x < dimensionX && y >= 0 && y < dimensionY;
     }
 
-    public void set(int x, int y, Ball ball) {
-        if (valid(x, y) && get(x, y) == null) {
-            balls[index(x, y)] = ball;
+    public bool valid(Vector2Int cell) {
+        return valid(cell.x, cell.y);
+    }
+
+    public void set(Vector2Int cell, Ball ball) {
+        if (valid(cell) && get(cell) == null) {
+            balls[index(cell)] = ball;
         }
     }
     private int emptyCount() {
@@ -46,17 +47,17 @@ public class GamePosition {
         }
         return count;
     }
-    public int getRandomIndex() {
+    public Vector2Int getEmptyCell() {
         int n = Random.Range(0, emptyCount());
         for (int i = 0; i < balls.Count; i++) {
             if (balls[i] == null) {
                 if (n == 0) {
-                    return i;
+                    return getCell(i);
                 }
                 n--;
             }
         }
-        return -1;
+        throw new KeyNotFoundException("No empty cell on the board found, emptyCount=" + emptyCount());
     }
 
     public void UnselectAll() {
@@ -67,9 +68,9 @@ public class GamePosition {
         }
     }
 
-    public Ball get(int x, int y) {
-        if (valid(x, y)) {
-            return (Ball)balls[index(x, y)];
+    public Ball get(Vector2Int cell) {
+        if (valid(cell)) {
+            return balls[index(cell)];
         }
         return null;
     }
@@ -112,11 +113,11 @@ public class GamePosition {
         throw new KeyNotFoundException("Ball " + ball + " not found");
     }
 
-    public void move(Ball ball, int x, int y) {
+    public void move(Ball ball, Vector2Int cell) {
         try {
             int ind = findIndex(ball);
             balls[ind] = null;
-            balls[index(x, y)] = ball;
+            balls[index(cell)] = ball;
         } catch (KeyNotFoundException) {
             // Ball not found
         }

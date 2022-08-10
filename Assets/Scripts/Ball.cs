@@ -51,14 +51,13 @@ public class Ball : MonoBehaviour {
 
     private Board board;
     private GamePosition gamePosition;
-    private CameraHelper cameraHelper;
 
     private Vector3 moveDestination;
     private float speed;
 
     public const float BALL_LEVEL = -1.0f;
 
-    static public Ball create(GameObject prefab, float scale, Board board, int x, int y, int colorIndex = -1) {
+    static public Ball create(GameObject prefab, float scale, Board board, Vector2Int cell, int colorIndex = -1) {
         NamedColor[] colors = {
             new NamedColor(255, 51, 51, "Red"),
             new NamedColor(Color.cyan, "Cyan"),
@@ -75,12 +74,12 @@ public class Ball : MonoBehaviour {
         }
         NamedColor color = colors[colorIndex];
         CameraHelper cameraHelper = new CameraHelper(board.boardDimension, board.boardDimension);
-        Vector3 position = cameraHelper.cellToCamera(x, y, BALL_LEVEL);
+        Vector3 position = cameraHelper.cellToCamera(cell, BALL_LEVEL);
         GameObject ballObject = Instantiate(prefab, position, Quaternion.identity, parent: board.transform);
 
         Ball ball = ballObject.GetComponent<Ball>();
         ball.color = colorIndex;
-        ball.name = color.name + " Ball " + ++ballNumber + " [" + x + ", " + y + " ]";
+        ball.name = color.name + " Ball " + ++ballNumber + " [" + cell.x + ", " + cell.y + " ]";
 
         Renderer renderer = ballObject.GetComponent<Renderer>();
         renderer.material.color = color.color;
@@ -91,13 +90,13 @@ public class Ball : MonoBehaviour {
 
     static public Ball spawn(GameObject prefab, float scale, Board board) {
         Ball ball = null;
-        GamePosition gamePosition = board.GetGamePosition();
-        int index = gamePosition.getRandomIndex();
-        if (index >= 0) {
-            int x = gamePosition.indexToX(index);
-            int y = gamePosition.indexToY(index);
-            ball = create(prefab, scale, board, x, y);;
-            gamePosition.set(x, y, ball);
+        try {
+            GamePosition gamePosition = board.GetGamePosition();
+            Vector2Int cell = gamePosition.getEmptyCell();
+            ball = create(prefab, scale, board, cell);
+            gamePosition.set(cell, ball);
+        } catch (KeyNotFoundException) {
+            // Out of empty cells
         }
         return ball;
     }
@@ -106,7 +105,6 @@ public class Ball : MonoBehaviour {
         GameObject boardObj = GameObject.Find("Board");
         board = boardObj.GetComponent<Board>();
         gamePosition = board.GetGamePosition();
-        cameraHelper = new CameraHelper(board.boardDimension, board.boardDimension);
         speed = board.ballSpeed;
 
         moveDestination = transform.position;
@@ -120,8 +118,8 @@ public class Ball : MonoBehaviour {
 
     }
 
-    public void move(int cellX, int cellY) {
-        moveDestination = cameraHelper.cellToCamera(cellX, cellY, BALL_LEVEL);
+    public void move(Vector3 destination) {
+        moveDestination = destination;
     }
 
     private void OnMouseUp() {
