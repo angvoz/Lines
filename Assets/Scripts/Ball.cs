@@ -47,6 +47,14 @@ public class Ball : MonoBehaviour {
 
     public Animator animator;
     public bool isSelected = false;
+    public bool isMoving = false;
+
+    private Board board;
+    private GamePosition gamePosition;
+    private CameraHelper cameraHelper;
+
+    private Vector3 moveDestination;
+    private const float SPEED = 0.7f;
 
     public const float BALL_LEVEL = -1.0f;
 
@@ -82,17 +90,25 @@ public class Ball : MonoBehaviour {
     }
 
     static public Ball spawn(GameObject prefab, float scale, Board board) {
-        int x = Random.Range(0, board.boardDimension);
-        int y = Random.Range(0, board.boardDimension);
-
-        Ball ball = create(prefab, scale, board, x, y);
+        Ball ball = null;
+        GamePosition gamePosition = board.GetGamePosition();
+        int index = gamePosition.getRandomIndex();
+        if (index >= 0) {
+            int x = gamePosition.indexToX(index);
+            int y = gamePosition.indexToY(index);
+            ball = create(prefab, scale, board, x, y);;
+            gamePosition.set(x, y, ball);
+        }
         return ball;
     }
 
-    static public void UnselectAll() {
-        foreach (Ball ball in GameObject.FindObjectsOfType<Ball>()) {
-            ball.Select(false);
-        }
+    private void Awake() {
+        GameObject boardObj = GameObject.Find("Board");
+        board = boardObj.GetComponent<Board>();
+        gamePosition = board.GetGamePosition();
+        cameraHelper = new CameraHelper(board.boardDimension, board.boardDimension);
+
+        moveDestination = transform.position;
     }
 
     public void Select(bool select = true) {
@@ -103,11 +119,30 @@ public class Ball : MonoBehaviour {
 
     }
 
+    public void move(int cellX, int cellY) {
+        moveDestination = cameraHelper.cellToCamera(cellX, cellY, BALL_LEVEL);
+    }
+
     private void OnMouseUp() {
-        bool select = !isSelected;
-        if (select) {
-            UnselectAll();
+        if (!isMoving && gamePosition.getMovingBall() == null) {
+            bool select = !isSelected;
+            if (select) {
+                gamePosition.UnselectAll();
+            }
+            Select(select);
         }
-        Select(select);
+    }
+
+
+    // Update is called once per frame
+    void Update() {
+        if (isMoving && transform.position == moveDestination) {
+            Select(false);
+        }
+
+        isMoving = transform.position != moveDestination;
+        if (isMoving) {
+            transform.position = Vector3.MoveTowards(transform.position, moveDestination, SPEED * Time.deltaTime);
+        }
     }
 }

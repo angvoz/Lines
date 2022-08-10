@@ -13,7 +13,12 @@ public class Board : MonoBehaviour {
 
     private const float BOARD_LEVEL = 0f;
 
+    private GamePosition gamePosition;
     private CameraHelper cameraHelper;
+
+    public GamePosition GetGamePosition() {
+        return gamePosition;
+    }
 
     void Start() {
         QualitySettings.vSyncCount = 0;
@@ -58,18 +63,24 @@ public class Board : MonoBehaviour {
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
         collider.size = new Vector2(boardDimension, boardDimension);
 
+        gamePosition = new GamePosition(boardDimension, boardDimension);
         cameraHelper = new CameraHelper(boardDimension, boardDimension);
         SpawnBalls(5);
     }
 
     private void OnMouseUp() {
-        Ball.UnselectAll();
-
         try {
             Vector2Int selectedCell = cameraHelper.getSelectedCell();
             int x = selectedCell.x;
             int y = selectedCell.y;
-            Ball.create(ballPrefab, cellSize, this, x, y);
+
+            if (gamePosition.getMovingBall() == null) {
+                Ball selectedBall = gamePosition.getSelectedBall();
+                if (selectedBall != null && gamePosition.get(x, y) == null) {
+                    selectedBall.move(x, y);
+                    gamePosition.move(selectedBall, x, y);
+                }
+            }
 
             //SpawnBalls(3);
         } catch {
