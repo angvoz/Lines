@@ -125,7 +125,9 @@ public class Ball : MonoBehaviour {
         if (animator != null) {
             animator.SetBool("selected", isSelected);
         }
-
+        if (isSelected) {
+            board.notifyBallSelected(this);
+        }
     }
 
     List<Vector3> moveDestinationPath = new List<Vector3>();
@@ -163,11 +165,11 @@ public class Ball : MonoBehaviour {
                     moveDestination = moveDestinationPath[0];
                 } else {
                     Select(false);
-                    board.notifyBallArrived();
+                    board.notifyBallArrived(this);
                 }
             } else {
                 Select(false);
-                board.notifyBallArrived();
+                board.notifyBallArrived(this);
             }
         }
 

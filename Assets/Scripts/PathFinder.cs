@@ -203,4 +203,138 @@ public class PathFinder
 
         return path;
     }
+
+    /*
+     * Collapse all lines having 5 or more balls in the row
+     */
+    public int CollapseLines(Ball ball) {
+        if (ball == null) {
+            return 0;
+        }
+
+        const int COLLAPSE_COUNT = 5;
+
+        List<Vector2Int> cellsToDelete = new List<Vector2Int>();
+        try {
+            List<Vector2Int> cellsCandidate = new List<Vector2Int>();
+            Vector2Int cellStart = gamePosition.findCell(ball);
+
+            // horizontal and vertical lanes
+            Lane laneRight = new Lane(new Range(cellStart.x + 1, gamePosition.dimensionX - 1), new Range(cellStart.y, cellStart.y));
+            Lane laneLeft = new Lane(new Range(cellStart.x - 1, 0), new Range(cellStart.y, cellStart.y));
+            Lane laneUp = new Lane(new Range(cellStart.x, cellStart.x), new Range(cellStart.y + 1, gamePosition.dimensionY - 1));
+            Lane laneDown = new Lane(new Range(cellStart.x, cellStart.x), new Range(cellStart.y - 1, 0));
+
+            List<Lane> lanes = new List<Lane>();
+
+            // left/right
+            lanes.Add(laneRight);
+            lanes.Add(laneLeft);
+
+            foreach (Lane lane in lanes) {
+                Range rangeX = lane.rangeX;
+                Range rangeY = lane.rangeY;
+                bool done = false;
+                for (int x = rangeX.start; rangeX.includes(x) && !done; x = rangeX.next(x)) {
+                    for (int y = rangeY.start; rangeY.includes(y) && !done; y = rangeY.next(y)) {
+                        Vector2Int cell = new Vector2Int(x, y);
+                        Ball b = gamePosition.get(cell);
+                        if (b == null || b.color != ball.color) {
+                            done = true;
+                        } else if (b.color == ball.color) {
+                            cellsCandidate.Add(cell);
+                        }
+                    }
+                }
+            }
+            if (cellsCandidate.Count >= COLLAPSE_COUNT - 1) {
+                cellsToDelete.AddRange(cellsCandidate);
+            }
+            cellsCandidate.Clear();
+            lanes.Clear();
+
+            // up/down
+            lanes.Add(laneUp);
+            lanes.Add(laneDown);
+            foreach (Lane lane in lanes) {
+                Range rangeX = lane.rangeX;
+                Range rangeY = lane.rangeY;
+                bool done = false;
+                for (int x = rangeX.start; rangeX.includes(x) && !done; x = rangeX.next(x)) {
+                    for (int y = rangeY.start; rangeY.includes(y) && !done; y = rangeY.next(y)) {
+                        Vector2Int cell = new Vector2Int(x, y);
+                        Ball b = gamePosition.get(cell);
+                        if (b == null || b.color != ball.color) {
+                            done = true;
+                        } else if (b.color == ball.color) {
+                            cellsCandidate.Add(cell);
+                        }
+                    }
+                }
+            }
+            if (cellsCandidate.Count >= COLLAPSE_COUNT - 1) {
+                cellsToDelete.AddRange(cellsCandidate);
+            }
+            cellsCandidate.Clear();
+            lanes.Clear();
+
+            // diagonals
+            List<Vector2Int> diagonalIncrements = new List<Vector2Int>();
+            diagonalIncrements.Add(new Vector2Int(+1, +1));
+            diagonalIncrements.Add(new Vector2Int(-1, -1));
+
+            foreach (Vector2Int inc in diagonalIncrements) {
+                bool done = false;
+                for (Vector2Int cell = new Vector2Int(cellStart.x + inc.x, cellStart.y + inc.y); gamePosition.valid(cell) && !done; cell = new Vector2Int(cell.x + inc.x, cell.y + inc.y)) {
+                    Ball b = gamePosition.get(cell);
+                    if (b == null || b.color != ball.color) {
+                        done = true;
+                    } else if (b.color == ball.color) {
+                        cellsCandidate.Add(cell);
+                    }
+                }
+            }
+            if (cellsCandidate.Count >= COLLAPSE_COUNT - 1) {
+                cellsToDelete.AddRange(cellsCandidate);
+            }
+            cellsCandidate.Clear();
+            diagonalIncrements.Clear();
+
+            diagonalIncrements.Add(new Vector2Int(+1, -1));
+            diagonalIncrements.Add(new Vector2Int(-1, +1));
+            foreach (Vector2Int inc in diagonalIncrements) {
+                bool done = false;
+                for (Vector2Int cell = new Vector2Int(cellStart.x + inc.x, cellStart.y + inc.y); gamePosition.valid(cell) && !done; cell = new Vector2Int(cell.x + inc.x, cell.y + inc.y)) {
+                    Ball b = gamePosition.get(cell);
+                    if (b == null || b.color != ball.color) {
+                        done = true;
+                    } else if (b.color == ball.color) {
+                        cellsCandidate.Add(cell);
+                    }
+                }
+            }
+            if (cellsCandidate.Count >= COLLAPSE_COUNT - 1) {
+                cellsToDelete.AddRange(cellsCandidate);
+            }
+            cellsCandidate.Clear();
+            diagonalIncrements.Clear();
+
+            // destroy all balls found
+            if (cellsToDelete.Count > 0) {
+                // Add the original ball that is causing the collapse
+                cellsToDelete.Insert(0, cellStart);
+                foreach (Vector2Int cell in cellsToDelete) {
+                    Ball b = gamePosition.get(cell);
+                    if (b != null) {
+                        Ball.Destroy(b.gameObject);
+                        gamePosition.set(cell, null);
+                    }
+                }
+            }
+        } catch (KeyNotFoundException) {
+            // Possible when the ball was already collapsed via another ball
+        }
+
+        return cellsToDelete.Count;
+    }
 }
