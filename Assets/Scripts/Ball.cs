@@ -57,7 +57,7 @@ public class Ball : MonoBehaviour {
 
     public const float BALL_LEVEL = -1.0f;
 
-    static public Ball create(GameObject prefab, float scale, Board board, Vector2Int cell, int colorIndex = -1) {
+    static private Ball create(GameObject prefab, float scale, Board board, Vector2Int cell, int colorIndex = -1) {
         NamedColor[] colors = {
             new NamedColor(255, 51, 51, "Red"),
             new NamedColor(Color.cyan, "Cyan"),
@@ -85,6 +85,16 @@ public class Ball : MonoBehaviour {
         renderer.material.color = color.color;
         Vector3 prefabScale = renderer.transform.localScale;
         renderer.transform.localScale = new Vector3(prefabScale.x * scale, prefabScale.y * scale, prefabScale.z * scale);
+        return ball;
+    }
+
+    static public Ball spawn(GameObject prefab, float scale, Board board, Vector2Int cell, int colorIndex = -1) {
+        Ball ball = null;
+        GamePosition gamePosition = board.GetGamePosition();
+        if (gamePosition.get(cell) == null) {
+            ball = create(prefab, scale, board, cell, colorIndex);
+            gamePosition.set(cell, ball);
+        }
         return ball;
     }
 

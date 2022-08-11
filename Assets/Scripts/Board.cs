@@ -59,6 +59,35 @@ public class Board : MonoBehaviour {
         }
     }
 
+    private void SpawnBall(int x, int y) {
+        Ball.spawn(ballPrefab, cellSize, this, new Vector2Int(x, y));
+    }
+
+    private void SpawnBallsSample() {
+        SpawnBall(0, 0);
+        SpawnBall(2, 0);
+        SpawnBall(1, 6);
+        SpawnBall(4, 6);
+        SpawnBall(4, 8);
+        SpawnBall(7, 6);
+        SpawnBall(0, 4);
+        SpawnBall(0, 8);
+        SpawnBall(3, 4);
+        SpawnBall(3, 5);
+        SpawnBall(8, 1);
+        SpawnBall(7, 0);
+        SpawnBall(6, 6);
+        SpawnBall(6, 5);
+        SpawnBall(4, 1);
+        SpawnBall(8, 3);
+        SpawnBall(0, 7);
+        SpawnBall(1, 5);
+        SpawnBall(2, 1);
+        SpawnBall(2, 7);
+        SpawnBall(4, 0);
+        SpawnBall(8, 7);
+    }
+
     private void SpawnBalls(int n) {
         for (int i = 0; i < n; i++) {
             Ball.spawn(ballPrefab, cellSize, this);
@@ -75,7 +104,8 @@ public class Board : MonoBehaviour {
         movePlate = new MovePlate(movePlatePrefab, this);
         trail = new Trail(textPlatePrefab, this);
 
-        SpawnBalls(5);
+        //SpawnBalls(5);
+        SpawnBallsSample();
     }
 
     private void OnMouseUp() {
