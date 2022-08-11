@@ -19,6 +19,7 @@ public class Board : MonoBehaviour {
 
     private GamePosition gamePosition;
     private CameraHelper cameraHelper;
+    private PathFinder pathFinder;
 
     private MovePlate movePlate;
     private Trail trail;
@@ -101,6 +102,7 @@ public class Board : MonoBehaviour {
 
         gamePosition = new GamePosition(boardDimension, boardDimension);
         cameraHelper = new CameraHelper(boardDimension, boardDimension);
+        pathFinder = new PathFinder(gamePosition);
         movePlate = new MovePlate(movePlatePrefab, this);
         trail = new Trail(textPlatePrefab, this);
 
@@ -117,9 +119,11 @@ public class Board : MonoBehaviour {
                 trail.clear();
             
                 Ball selectedBall = gamePosition.getSelectedBall();
+                if (selectedBall != null) {
+                    List<Vector2Int> path = pathFinder.getPath(selectedBall, selectedCell);
+                    trail.create(path);
+                    //trail.createDebug(path, pathFinder);
 
-                if (selectedCell != null) {
-                    trail.createPlate(selectedCell, selectedCell.ToString());
                     movePlate.create(selectedCell);
                 }
 

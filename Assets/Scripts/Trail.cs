@@ -33,4 +33,46 @@ public class Trail {
         textPlateList.Add(textPlateObject);
         return textPlateObject;
     }
+
+    private GameObject createPlate(Vector2Int cell, Vector2Int? cellTo) {
+        string text = "";
+        if (cellTo.HasValue) {
+            text = cellTo.ToString();
+        }
+        GameObject textPlateObject = createPlate(cell, text);
+        return textPlateObject;
+    }
+
+    public void createDebug(List<Vector2Int> path, PathFinder pathFinder) {
+        // For debugging purpose
+        Vector2Int?[,] pathPlan = pathFinder.getPathPlan();
+        for (int x = 0; x < board.boardDimension; x++) {
+            for (int y = 0; y < board.boardDimension; y++) {
+                Vector2Int cell = new Vector2Int(x, y);
+                Vector2Int? val = pathPlan[x, y];
+                if (val.HasValue) {
+                    createPlate(cell, val);
+                }
+            }
+        }
+    }
+
+    public void create(List<Vector2Int> path) {
+        for (int i = 0; i < path.Count - 1; i++) {
+            Vector2Int from = path[i];
+            Vector2Int to = path[i + 1];
+            if (from.x == to.x) {
+                Range rangeY = new Range(from.y, to.y);
+                for (int y = rangeY.start; rangeY.includes(y) && y != rangeY.end; y = rangeY.next(y)) {
+                    createPlate(new Vector2Int(from.x, y), to);
+                }
+            }
+            if (from.y == to.y) {
+                Range rangeX = new Range(from.x, to.x);
+                for (int x = rangeX.start; rangeX.includes(x) && x != rangeX.end; x = rangeX.next(x)) {
+                    createPlate(new Vector2Int(x, from.y), to);
+                }
+            }
+        }
+    }
 }
