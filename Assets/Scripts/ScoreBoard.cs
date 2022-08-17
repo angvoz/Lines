@@ -19,8 +19,9 @@ public class ScoreBoard {
         return number * (number + 1) / 2;
     }
 
-    public void score(int cnt) {
+    public int score(int cnt) {
         scoreCount = scoreCount + cnt * triangularNumber(cnt - 4) * 2;
         scoreboardMesh.text = scoreCount.ToString();
+        return scoreCount;
     }
 }

@@ -15,6 +15,7 @@ public class Board : MonoBehaviour {
     [SerializeField] private GameObject movePlatePrefab;
     [SerializeField] private GameObject textPlatePrefab;
     [SerializeField] private GameObject scoreBoardPrefab;
+    [SerializeField] private GameObject leaderBoardPrefab;
 
     private const float BOARD_LEVEL = 0f;
 
@@ -22,6 +23,7 @@ public class Board : MonoBehaviour {
     private CameraHelper cameraHelper;
     private PathFinder pathFinder;
     private ScoreBoard scoreboard;
+    private LeaderBoard leaderboard;
 
     private MovePlate movePlate;
     private Trail trail;
@@ -80,6 +82,7 @@ public class Board : MonoBehaviour {
         movePlate = new MovePlate(movePlatePrefab, this);
         trail = new Trail(textPlatePrefab, this);
         scoreboard = new ScoreBoard(scoreBoardPrefab, this);
+        leaderboard = new LeaderBoard(leaderBoardPrefab, this);
 
         SpawnBalls(5);
     }
@@ -136,7 +139,8 @@ public class Board : MonoBehaviour {
 
                 int cnt = pathFinder.CollapseLines(ball);
                 if (cnt > 0) {
-                    scoreboard.score(cnt);
+                    int score = scoreboard.score(cnt);
+                    leaderboard.updateTopScore(score);
                 } else {
                     SpawnBalls(3);
                 }
