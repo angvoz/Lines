@@ -6,7 +6,7 @@ public class LeaderBoard {
     private const float margin = 0.2f;
 
     private TextMeshPro[] scoreLines;
-    private List<int> topScoresOriginal = new List<int>();
+    private List<int> topScores = new List<int>();
 
     List<HighScoreEntry> scores;
 
@@ -32,10 +32,10 @@ public class LeaderBoard {
             }
             
             Load();
-            if (topScoresOriginal.Count == 0) {
-                topScoresOriginal.Add(0);
+            if (topScores.Count == 0) {
+                topScores.Add(0);
             }
-            renderTopScores(topScoresOriginal);
+            renderTopScores(topScores);
         }
     }
 
@@ -54,36 +54,45 @@ public class LeaderBoard {
         }
     }
 
-    public void updateTopScore(int score) {
-        List<int> topScores = new List<int>(topScoresOriginal);
-        if (topScores.Count < scoreLines.Length) {
-            if (topScores.Count > 0 && topScores[0] == 0) {
-                topScores.RemoveAt(0);
+    public void registerFinalScore(int finalScore) {
+        if (finalScore > 0) {
+            topScores.Add(finalScore);
+            renderTopScores(topScores);
+        }
+    }
+
+    public void updateTopScore(int scoreRunning) {
+        List<int> topScoresRunning = new List<int>(topScores);
+        if (topScoresRunning.Count < scoreLines.Length) {
+            if (topScoresRunning.Count > 0 && topScoresRunning[0] == 0) {
+                topScoresRunning.RemoveAt(0);
             }
-            topScores.Add(score);
-            renderTopScores(topScores, score);
-        } else if (topScores[0] < score) {
-            topScores[0] = score;
-            renderTopScores(topScores, score);
+            topScoresRunning.Add(scoreRunning);
+            renderTopScores(topScoresRunning, scoreRunning);
+        } else if (topScoresRunning[0] <= scoreRunning) {
+            topScoresRunning[0] = scoreRunning;
+            renderTopScores(topScoresRunning, scoreRunning);
         }
 
-        Save(topScores);
+        Save(topScoresRunning);
     }
 
 
     void Load() {
         scores = xmlManager.LoadScores();
 
-        topScoresOriginal = new List<int>();
+        topScores = new List<int>();
         foreach (var scoreEntry in scores) {
-            topScoresOriginal.Add(scoreEntry.score);
+            topScores.Add(scoreEntry.score);
         }
     }
 
     void Save(List<int> topScores) {
         List<HighScoreEntry> newScores = new List<HighScoreEntry>();
         foreach (int score in topScores) {
-            newScores.Add(new HighScoreEntry("Andre", score));
+            if (score != 0) {
+                newScores.Add(new HighScoreEntry("Andre", score));
+            }
         }
 
         xmlManager.SaveScores(newScores);

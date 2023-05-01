@@ -16,6 +16,7 @@ public class Board : MonoBehaviour {
     [SerializeField] private GameObject textPlatePrefab;
     [SerializeField] private GameObject scoreBoardPrefab;
     [SerializeField] private GameObject leaderBoardPrefab;
+    [SerializeField] private GameObject gameOverPrefab;
 
     private const float BOARD_LEVEL = 0f;
 
@@ -24,9 +25,12 @@ public class Board : MonoBehaviour {
     private PathFinder pathFinder;
     private ScoreBoard scoreboard;
     private LeaderBoard leaderboard;
+    private GameOverBoard gameoverboard;
 
     private MovePlate movePlate;
     private Trail trail;
+
+    private int lastScore = 0;
 
     public GamePosition GetGamePosition() {
         return gamePosition;
@@ -139,12 +143,30 @@ public class Board : MonoBehaviour {
 
                 int cnt = pathFinder.CollapseLines(ball);
                 if (cnt > 0) {
-                    int score = scoreboard.score(cnt);
-                    leaderboard.updateTopScore(score);
+                    lastScore = scoreboard.score(cnt);
+                    leaderboard.updateTopScore(lastScore);
                 } else {
                     SpawnBalls(3);
                 }
+
+                if (gamePosition.isFull()) {
+                    if (gameoverboard == null) {
+                        gameoverboard = GameOverBoard.createGameOverBoard(gameOverPrefab, this);
+                    }
+                }
             }
         }
+    }
+
+    public void reset() {
+        leaderboard.registerFinalScore(lastScore);
+        lastScore = 0;
+
+        gamePosition.clear();
+        GameOverBoard.Destroy(gameoverboard.gameObject);
+        gameoverboard = null;
+        scoreboard.reset();
+
+        SpawnBalls(5);
     }
 }

@@ -272,6 +272,7 @@ MonoBehaviour:
   textPlatePrefab: {fileID: 4967515002671648670, guid: 34b345f3dfcf5db499a3ef384ad5c3f7, type: 3}
   scoreBoardPrefab: {fileID: 1826282134977825598, guid: cb98431df44604749bc9b7184b39c131, type: 3}
   leaderBoardPrefab: {fileID: 34666077277186207, guid: 109fbb8c81b5c254292a95adff5169bd, type: 3}
+  gameOverPrefab: {fileID: 1826282134977825598, guid: b5d42ae3259e6454d8d6edf4a54b4d3b, type: 3}
 --- !u!61 &51295431
 BoxCollider2D:
   m_ObjectHideFlags: 0

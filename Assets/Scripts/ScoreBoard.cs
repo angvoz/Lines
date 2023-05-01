@@ -14,6 +14,10 @@ public class ScoreBoard {
         scoreboardMesh.text = "0";
     }
 
+    public void reset() {
+        scoreCount = 0;
+        scoreboardMesh.text = scoreCount.ToString();
+    }
     private int triangularNumber(int number) {
         // Triangular number is a thing in math
         return number * (number + 1) / 2;

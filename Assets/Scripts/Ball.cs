@@ -143,7 +143,7 @@ public class Ball : MonoBehaviour {
     }
 
     private void OnMouseUp() {
-        if (!isMoving && gamePosition.getMovingBall() == null) {
+        if (!isMoving && gamePosition.getMovingBall() == null && !gamePosition.isFull()) {
             bool select = !isSelected;
             if (select) {
                 gamePosition.UnselectAll();

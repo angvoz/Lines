@@ -56,6 +56,11 @@ public class GamePosition {
         }
         return count;
     }
+
+    public bool isFull() {
+        return emptyCount() == 0;
+    }
+
     public Vector2Int getEmptyCell() {
         int n = Random.Range(0, emptyCount());
         for (int i = 0; i < balls.Count; i++) {
@@ -129,6 +134,15 @@ public class GamePosition {
             balls[index(cell)] = ball;
         } catch (KeyNotFoundException) {
             // Ball not found
+        }
+    }
+
+    public void clear() {
+        for (int i = 0; i < dimensionX * dimensionY; i++) {
+            if (balls[i] != null) {
+                Ball.Destroy(balls[i].gameObject);
+                balls[i] = null;
+            }
         }
     }
 }
