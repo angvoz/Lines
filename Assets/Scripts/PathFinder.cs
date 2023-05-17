@@ -324,11 +324,7 @@ public class PathFinder
                 // Add the original ball that is causing the collapse
                 cellsToDelete.Insert(0, cellStart);
                 foreach (Vector2Int cell in cellsToDelete) {
-                    Ball b = gamePosition.get(cell);
-                    if (b != null) {
-                        Ball.Destroy(b.gameObject);
-                        gamePosition.set(cell, null);
-                    }
+                    gamePosition.clear(cell);
                 }
             }
         } catch (KeyNotFoundException) {

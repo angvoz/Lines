@@ -137,6 +137,14 @@ public class GamePosition {
         }
     }
 
+    public void clear(Vector2Int cell) {
+        Ball b = get(cell);
+        if (b != null) {
+            Ball.Destroy(b.gameObject);
+            set(cell, null);
+        }
+    }
+
     public void clear() {
         for (int i = 0; i < dimensionX * dimensionY; i++) {
             if (balls[i] != null) {
