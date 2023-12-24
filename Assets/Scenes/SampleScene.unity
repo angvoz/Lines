@@ -273,6 +273,7 @@ MonoBehaviour:
   scoreBoardPrefab: {fileID: 1826282134977825598, guid: cb98431df44604749bc9b7184b39c131, type: 3}
   leaderBoardPrefab: {fileID: 34666077277186207, guid: 109fbb8c81b5c254292a95adff5169bd, type: 3}
   gameOverPrefab: {fileID: 1826282134977825598, guid: b5d42ae3259e6454d8d6edf4a54b4d3b, type: 3}
+  resetButtonPrefab: {fileID: 6046455423340785856, guid: c9943f15c94318140bf1185e2f3cbfca, type: 3}
 --- !u!61 &51295431
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -17,6 +17,7 @@ public class Board : MonoBehaviour {
     [SerializeField] private GameObject scoreBoardPrefab;
     [SerializeField] private GameObject leaderBoardPrefab;
     [SerializeField] private GameObject gameOverPrefab;
+    [SerializeField] private GameObject resetButtonPrefab;
 
     private const float BOARD_LEVEL = 0f;
 
@@ -26,6 +27,7 @@ public class Board : MonoBehaviour {
     private ScoreBoard scoreboard;
     private LeaderBoard leaderboard;
     private GameOverBoard gameoverboard;
+    private ResetButton resetButton;
 
     private MovePlate movePlate;
     private Trail trail;
@@ -87,6 +89,8 @@ public class Board : MonoBehaviour {
         trail = new Trail(textPlatePrefab, this);
         scoreboard = new ScoreBoard(scoreBoardPrefab, this);
         leaderboard = new LeaderBoard(leaderBoardPrefab, this);
+
+        ResetButton.create(resetButtonPrefab, this);
 
         SpawnBalls(5);
     }
@@ -163,8 +167,10 @@ public class Board : MonoBehaviour {
         lastScore = 0;
 
         gamePosition.clear();
-        GameOverBoard.Destroy(gameoverboard.gameObject);
-        gameoverboard = null;
+        if (gameoverboard != null) {
+            GameOverBoard.Destroy(gameoverboard.gameObject);
+            gameoverboard = null;
+        }
         scoreboard.reset();
 
         SpawnBalls(5);
